@@ -1,0 +1,2 @@
+rootProject.name = "AppCorrectionAndroidPath"
+include ':app'
