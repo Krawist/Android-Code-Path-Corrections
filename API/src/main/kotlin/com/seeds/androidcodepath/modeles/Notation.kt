@@ -1,11 +1,9 @@
 package com.seeds.androidcodepath.modeles
 
 import com.seeds.androidcodepath.modeles.Notation.Companion.NOTATION_TABLE_NAME
+import org.jetbrains.annotations.NotNull
 import java.io.Serializable
-import javax.persistence.Column
-import javax.persistence.EmbeddedId
-import javax.persistence.Entity
-import javax.persistence.Table
+import javax.persistence.*
 
 
 /**
@@ -15,26 +13,37 @@ import javax.persistence.Table
 @Table(name = NOTATION_TABLE_NAME)
 data class Notation(
 
-        @EmbeddedId
-        val notationKey: NotationKey? = null,
+    @Column(name = NOTATION_REMARQUES_FIELD)
+    var remarque: String = "",
 
-        @Column(name = NOTATION_QUALITE_RENDU_FIELD)
-        var qualiteRendu: Float = 0f,
+    @Column(name = CODE_APPRENANT_FIELD)
+    var codeApprenant : String = "",
 
-        @Column(name = NOTATION_RESPECT_DETAILS_FIELD)
-        var respectDetails: Float = 0f,
+    @Column(name = USER_EMAIL_FIELD)
+    var userEmail : String = "",
 
-        @Column(name = NOTATION_RESPECT_CONTRAINTES_FIELD)
-        var respectContraintes: Float = 0f
+    @Column(name = CODE_WORK_FIELD)
+    var codeWork : String = ""
+
 ) : Serializable {
 
-    companion object {
+    @Column(name = NOTATION_KEY_FIELD)
+    @Id @NotNull
+    var key: Int = 0
 
-        const val NOTATION_TABLE_NAME = "Notation"
-        const val NOTATION_QUALITE_RENDU_FIELD = "qualite_rendu"
-        const val NOTATION_RESPECT_DETAILS_FIELD = "respect_details"
-        const val NOTATION_RESPECT_CONTRAINTES_FIELD = "respect_contraintes"
-
+    init {
+        key = (codeApprenant + userEmail + codeWork).hashCode()
     }
 
+    @OneToMany(targetEntity = Note::class, mappedBy = "noteKey")
+    val notes: List<Note>? = null
+
+    companion object {
+        const val NOTATION_TABLE_NAME = "Notation"
+        const val NOTATION_REMARQUES_FIELD = "remarques"
+        const val NOTATION_KEY_FIELD = "notation_key"
+        const val CODE_APPRENANT_FIELD = "code_apprenant"
+        const val USER_EMAIL_FIELD = "user_email"
+        const val CODE_WORK_FIELD = "code_work"
+    }
 }

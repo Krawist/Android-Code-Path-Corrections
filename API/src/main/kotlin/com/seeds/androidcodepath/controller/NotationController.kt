@@ -3,6 +3,7 @@ package com.seeds.androidcodepath.controller
 import com.seeds.androidcodepath.`package`.isEmailAddress
 import com.seeds.androidcodepath.modeles.Notation
 import com.seeds.androidcodepath.modeles.NotationRepository
+import com.seeds.androidcodepath.modeles.NoteRepository
 import fr.smartds.smartdsmarketplace.api.request_settings.RequestResult
 import org.springframework.beans.factory.annotation.Autowired
 import fr.smartds.smartdsmarketplace.api.request_settings.RequestResult.Companion.RESULT_CODE_ALL_IS_CORRECT
@@ -19,33 +20,46 @@ class NotationController {
     @Autowired
     private var notationRepository : NotationRepository? = null
 
+    @Autowired
+    private var noteRepository : NoteRepository? = null
+
     @PostMapping("save")
     fun saveNotation(
         @RequestBody notation: Notation
     ) : RequestResult<Any?>{
         try {
+            var allIsCorrect = true
+            notation.notes?.forEach {
+                if(it.note<0 || it.note>it.noteOver){
+                    allIsCorrect = false
+                }
+            }
+            if(!allIsCorrect){
+                return error(RESULT_CODE_BAD_INFORMATION,"Les notes fournies nes sont pas correctes")
+            }
             return when{
-                notation.notationKey == null -> {
-                    error(RESULT_CODE_BAD_INFORMATION, "La clé fournie n'est pas correcte")
+
+                notation.notes.isNullOrEmpty() ->{
+                    error(RESULT_CODE_BAD_INFORMATION, "Les notes fournies nes sont pas correctes")
                 }
 
-                notation.notationKey.codeApprenant.isBlank() -> {
+                notation.codeApprenant.isBlank() -> {
                     error(RESULT_CODE_BAD_INFORMATION, "Le code de l'apprenant n'a pas été fourni")
                 }
 
-                notation.notationKey.codeWork.isBlank() ->{
+                notation.codeWork.isBlank() ->{
                     error(RESULT_CODE_BAD_INFORMATION, "Le code du travail n'a pas été fourni")
                 }
 
-                notation.notationKey.userEmail.isBlank() || !isEmailAddress(notation.notationKey.userEmail)-> {
+                notation.userEmail.isBlank() || !isEmailAddress(notation.userEmail)-> {
                     error(RESULT_CODE_BAD_INFORMATION, "L'adresse email n'a pas été fournie ou n'est pas correcte")
                 }
 
-                notation.qualiteRendu < 0 && notation.respectContraintes < 0 && notation.respectDetails < 0 -> {
-                    error(RESULT_CODE_BAD_INFORMATION, "Au moins une note parmi qualité de rendu, respect des contraintes, respects des contraintes doit etre supérieur à 0")
-                }
-
                 else -> {
+                    notation.notes.forEach {
+                        it.noteKey = notation.key
+                        noteRepository?.save(it)
+                    }
                     val saveNotation = notationRepository?.save(notation)
                     success(saveNotation, RESULT_CODE_ALL_IS_CORRECT)
                 }
