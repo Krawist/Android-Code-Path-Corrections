@@ -37,15 +37,8 @@ class WorkAdapter(private val toDoOnActions: ToDoOnActions) : ListAdapter<Work, 
             }
 
             dataBinding.workName.text = work.workName
-            dataBinding.workerId.text = work.workerId
 
             dataBinding.imagePreview.setImageResource(work.realisationImageId)
-
-            if(position > 0 && currentList[position - 1].workerId == work.workerId){
-                dataBinding.layoutWorkerId.gone()
-            }else{
-                dataBinding.layoutWorkerId.show()
-            }
 
             if(work.evaluate){
                 dataBinding.indicatorEvaluate.show()

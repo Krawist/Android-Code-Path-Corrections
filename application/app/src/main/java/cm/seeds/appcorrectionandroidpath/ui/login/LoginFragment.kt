@@ -69,7 +69,7 @@ class LoginFragment : Fragment() {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             if(account!=null){
-                mainViewModel.connectedUser.value = User(userName = account.displayName,userEmail = account.email, userImage = account.photoUrl?.toString())
+                mainViewModel.setCurrentUser(User(userName = account.displayName,userEmail = account.email, userImage = account.photoUrl?.toString()))
                 navigateToEvaluation()
             }else{
                 showMessage(requireContext(), message = completedTask.exception?.stackTraceToString())
@@ -92,6 +92,7 @@ class LoginFragment : Fragment() {
 
         databinding.buttonSignIn.setOnClickListener {
             signIn()
+            //navigateToEvaluation()
         }
 
     }

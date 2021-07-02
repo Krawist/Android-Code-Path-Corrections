@@ -18,15 +18,15 @@ data class Work(
     var workId : String = "",
     val workerId : String = "",
     val workName : String = "",
+    val userEmail : String = "",
     @LayoutRes val realisationLayoutId : Int = 0,
     @DrawableRes val realisationImageId : Int = 0,
     var evaluate : Boolean = false,
-    var notation: Notation? = null,
     var workType : Int = WORK_TYPE_REPRODUCTION,
-    val qualiteRenduOver : Double = 0.0,
-    val respectContraintesOver : Double = 0.0,
-    val respectDetailsOver : Double = 0.0
+    val allOver : Double
 ) : Serializable{
+
+    var notation = Notation(codeApprenant = workerId, codeWork = workerId + workName, userEmail =  userEmail, notes = Note.getNotes(typeOfWork = workType,allOver = allOver))
 
     companion object{
         const val WORK_TYPE_REPRODUCTION = 1

@@ -125,6 +125,7 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.realisationFragment, Bundle().apply {
                 putSerializable(WORK_TO_SHOW, any as Work)
             })
+            dataBinding.drawerLayout.closeDrawer(GravityCompat.START,true)
         }
         recyclerViewWorks.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)

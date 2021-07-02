@@ -5,19 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
 import cm.seeds.appcorrectionandroidpath.databinding.FragmentRealisationBinding
+import cm.seeds.appcorrectionandroidpath.databinding.ItemNoteBinding
 import cm.seeds.appcorrectionandroidpath.helper.gone
 import cm.seeds.appcorrectionandroidpath.helper.show
-import cm.seeds.appcorrectionandroidpath.modeles.Notation
-import cm.seeds.appcorrectionandroidpath.modeles.NotationKey
 import cm.seeds.appcorrectionandroidpath.modeles.Work
 import cm.seeds.appcorrectionandroidpath.ui.MainViewModel
 import cm.seeds.appcorrectionandroidpath.ui.realisation.fragment_item.RealisationImageFragment
 import cm.seeds.appcorrectionandroidpath.ui.realisation.fragment_item.RealisationLayoutFragment
 import cm.seeds.appcorrectionandroidpath.viewmodel.ViewModelFactory
+import java.lang.NumberFormatException
 
 class RealisationFragment : Fragment() {
 
@@ -76,30 +77,8 @@ class RealisationFragment : Fragment() {
         }
 
         databinding.buttonValidateExamination.setOnClickListener {
-
             if(allIsCorrect()){
-                val notation = Notation(
-                    qualiteRendu = try {
-                        databinding.edittextQualiteRendu.text.toString().toFloat()
-                    }catch (e : Exception){
-                        0f
-                    },
-
-                    respectContraintes= try {
-                        databinding.edittextRespectContraintes.text.toString().toFloat()
-                    }catch (e : Exception){
-                        0f
-                    },
-
-                    respectDetails = try {
-                        databinding.edittextRespectDetails.text.toString().toFloat()
-                    }catch (e : Exception){
-                        0f
-                    },
-
-                    notationKey = NotationKey(userEmail = mainViewModel.connectedUser.value?.userEmail?:"")
-                )
-                mainViewModel.evaluate(notation, realisationViewModel.work.value!!)
+                mainViewModel.evaluate(realisationViewModel.work.value!!)
             }
         }
     }
@@ -110,47 +89,18 @@ class RealisationFragment : Fragment() {
 
         val work = realisationViewModel.work.value!!
 
-        val qualiteRendu = try {
-            databinding.edittextQualiteRendu.text.toString().toDouble()
-        }catch (e : Exception){
-            0.0
+        work.notation?.notes?.forEach {
+            if(it.note<0 || it.note>it.noteOver){
+                allIsCorrect = false
+            }
         }
 
-        val respectContraintes= try {
-            databinding.edittextRespectContraintes.text.toString().toDouble()
-        }catch (e : Exception){
-            0.0
-        }
-
-        val respectDetails = try {
-            databinding.edittextRespectDetails.text.toString().toDouble()
-        }catch (e : Exception){
-            0.0
-        }
-
-        if(qualiteRendu>work.qualiteRenduOver){
+        val remarques = databinding.edittextRemarques.text.toString()
+        if(remarques.isNullOrBlank()){
+            databinding.inputLayoutRemarques.error = "Une remarque est absolument néccéssaire"
             allIsCorrect = false
-            databinding.layoutEdittextQualiteRendu.error = "Impossible de donner plus de ${work.qualiteRenduOver}"
-        }
-
-
-
-        when(work.workType){
-
-            Work.WORK_TYPE_CREATION -> {
-                if(respectContraintes>work.respectContraintesOver){
-                    allIsCorrect = false
-                    databinding.layoutEdittextRespectContarintes.error = "Impossible de donner plus de ${work.respectContraintesOver}"
-                }
-            }
-
-            Work.WORK_TYPE_REPRODUCTION -> {
-                if(respectDetails>work.respectDetailsOver){
-                    allIsCorrect = false
-                    databinding.layoutEdittextRespectDetails.error = "Impossible de donner plus de ${work.respectDetailsOver}"
-                }
-            }
-
+        }else{
+            work.notation?.remarque = remarques
         }
 
         return allIsCorrect
@@ -179,21 +129,28 @@ class RealisationFragment : Fragment() {
     }
 
     private fun setupWorkCorrections(work: Work) {
-        databinding.layoutEdittextQualiteRendu.suffixText = "/${work.qualiteRenduOver}"
-        databinding.layoutEdittextRespectContarintes.suffixText = "/${work.respectContraintesOver}"
-        databinding.layoutEdittextRespectDetails.suffixText = "/${work.respectDetailsOver}"
-
-        work.notation?.let {
-            databinding.edittextRespectDetails.setText(it.respectDetails.toString())
-            databinding.edittextRespectContraintes.setText(it.respectContraintes.toString())
-            databinding.edittextQualiteRendu.setText(it.qualiteRendu.toString())
-        }
-
-        when(work.workType){
-
-            Work.WORK_TYPE_REPRODUCTION -> databinding.layoutEdittextRespectContarintes.gone()
-            Work.WORK_TYPE_CREATION -> databinding.layoutEdittextRespectDetails.gone()
-
+        databinding.label.text = work.workName
+        work.notation?.notes?.forEach { note ->
+            val noteDataBinding = ItemNoteBinding.inflate(LayoutInflater.from(requireContext()),databinding.layoutNotes,false)
+            noteDataBinding.inputLayout.apply {
+                suffixText = "/${note.noteOver}"
+                hint = note.noteName
+            }
+            noteDataBinding.edittext.setText(note.note.toString())
+            noteDataBinding.edittext.doAfterTextChanged {
+                try {
+                    val noteDonner = it.toString().toDouble()
+                    if(noteDonner>0 && noteDonner<=note.noteOver){
+                        note.note = noteDonner
+                        noteDataBinding.inputLayout.error = null
+                    }else{
+                        noteDataBinding.inputLayout.error = "La  note fourni n'est pas autorisé"
+                    }
+                }catch (e : NumberFormatException){
+                    noteDataBinding.inputLayout.error = "La  note fourni n'est pas autorisé"
+                }
+            }
+            databinding.layoutNotes.addView(noteDataBinding.root)
         }
     }
 

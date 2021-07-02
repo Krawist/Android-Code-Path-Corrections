@@ -42,6 +42,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:cardCornerRadius="@dimen/fab_margin"
+                app:cardElevation="@dimen/quatre_fab_margin"
                 android:visibility="gone">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -86,72 +87,33 @@
                         android:padding="@dimen/semi_fab_margin"
                         android:background="@drawable/button_round_background"/>
 
+                    <LinearLayout
+                        android:id="@+id/layout_notes"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        app:layout_constraintTop_toBottomOf="@id/button_validate_examination"
+                        android:orientation="vertical"
+                        android:layout_marginTop="@dimen/semi_fab_margin"/>
+
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layout_edittext_qualite_rendu"
+                        android:id="@+id/input_layout_remarques"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_marginStart="@dimen/fab_margin"
+                        android:layout_marginEnd="@dimen/fab_margin"
+                        android:hint="Remarques"
+                        app:layout_constraintTop_toBottomOf="@id/layout_notes"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/layout_edittext_respect_details"
-                        app:layout_constraintTop_toBottomOf="@id/label"
-                        android:layout_marginStart="@dimen/semi_fab_margin"
-                        android:layout_marginEnd="@dimen/semi_fab_margin"
-                        android:hint="Qualité du rendu"
-                        app:suffixText="/5"
+                        app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginTop="@dimen/semi_fab_margin">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edittext_qualite_rendu"
+                            android:id="@+id/edittext_remarques"
                             android:layout_width="match_parent"
+                            android:selectAllOnFocus="true"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layout_edittext_respect_details"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/layout_edittext_qualite_rendu"
-                        android:layout_marginStart="@dimen/semi_fab_margin"
-                        android:layout_marginEnd="@dimen/semi_fab_margin"
-                        android:hint="Respects des détails"
-                        app:layout_constraintTop_toBottomOf="@id/label"
-                        android:layout_marginTop="@dimen/semi_fab_margin">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edittext_respect_details"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layout_edittext_respect_contarintes"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                        android:layout_marginStart="@dimen/semi_fab_margin"
-                        android:layout_marginEnd="@dimen/semi_fab_margin"
-                        android:hint="Respects des détails"
-                        app:layout_constraintTop_toBottomOf="@id/layout_edittext_qualite_rendu"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="@dimen/semi_fab_margin"
-                        app:suffixText="/10">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edittext_respect_contraintes"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="number"
+                            android:inputType="textCapSentences|text"
                             android:singleLine="true"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
 

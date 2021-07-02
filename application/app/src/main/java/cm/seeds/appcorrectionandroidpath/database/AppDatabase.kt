@@ -7,7 +7,7 @@ import cm.seeds.appcorrectionandroidpath.modeles.Work
 
 @SuppressLint("RestrictedApi")
 @Database(
-        version = 14,
+        version = 19,
         entities = [Work::class],
         exportSchema = true
 )
