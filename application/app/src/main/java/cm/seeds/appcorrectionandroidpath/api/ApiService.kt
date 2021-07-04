@@ -8,7 +8,7 @@ import retrofit2.http.POST
 interface ApiService {
 
     companion object {
-        const val BASE_URL = "http://192.168.100.12:9091/"
+        const val BASE_URL = "http://161.97.103.232:9091/"
     }
 
     @POST("notations/save")
